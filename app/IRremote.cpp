@@ -264,7 +264,7 @@ void IRsend::enableIROut(int khz)
 	ETS_FRC1_INTR_DISABLE();
 	RTC_REG_WRITE(FRC1_CTRL_ADDRESS, DIVDED_BY_16 | FRC1_ENABLE_TIMER | FRC1_AUTO_RELOAD | TM_LEVEL_INT);
 	RTC_REG_WRITE(FRC1_LOAD_ADDRESS, ticks);
-	ETS_FRC_TIMER1_INTR_ATTACH((void *)irsend_interrupt_handler, this);
+	ETS_FRC_TIMER1_INTR_ATTACH((void *)irsend_interrupt_handler, NULL);
 	TM1_EDGE_INT_ENABLE();
 }
 
