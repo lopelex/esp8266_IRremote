@@ -11,16 +11,13 @@
 #define FRC1_ENABLE_TIMER BIT7
 #define FRC1_AUTO_RELOAD BIT6
 
-typedef enum {
-	DIVDED_BY_1 = 0,
-	DIVDED_BY_16 = 4,
-	DIVDED_BY_256 = 8,
-} TIMER_PREDIVED_MODE;
+#define	DIVDED_BY_1 0
+#define	DIVDED_BY_16 4
+#define DIVDED_BY_256 8
 
-typedef enum {
-	TM_LEVEL_INT = 1,
-	TM_EDGE_INT = 0,
-} TIMER_INT_MODE;
+#define TM_EDGE_INT 0
+#define TM_LEVEL_INT 1
+
 
 enum decode_type_t {
   NEC = 1,

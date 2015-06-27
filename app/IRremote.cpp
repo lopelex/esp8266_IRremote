@@ -259,13 +259,14 @@ void IRsend::enableIROut(int khz)
 	digitalWrite(irparams.sendpin, LOW);
 
 	uint32_t hz = khz * 1000;
-	uint32_t ticks = CPU_CLK_FREQ / 16 / hz / 2;
+	uint32_t cpu_freq = system_get_cpu_freq() * 1000000;
+	uint32_t ticks = (cpu_freq / 16 / hz / 2) - 1;
 
 	ETS_FRC1_INTR_DISABLE();
+	TM1_EDGE_INT_ENABLE();
 	RTC_REG_WRITE(FRC1_CTRL_ADDRESS, DIVDED_BY_16 | FRC1_ENABLE_TIMER | FRC1_AUTO_RELOAD | TM_LEVEL_INT);
 	RTC_REG_WRITE(FRC1_LOAD_ADDRESS, ticks);
 	ETS_FRC_TIMER1_INTR_ATTACH((void *)irsend_interrupt_handler, NULL);
-	TM1_EDGE_INT_ENABLE();
 }
 
 
