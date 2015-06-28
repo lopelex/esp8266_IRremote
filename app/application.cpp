@@ -3,15 +3,26 @@
 #include "IRremoteInt.h"
 #include <SmingCore/SmingCore.h>
 
-#define IR_PIN 12 // GPIO12
+#define IRR_PIN 12 // GPIO12
+#define IRS_PIN 13 // GPIO13
+#define LED_PIN 5 // GPIO5
 
 Timer irTimer;
 decode_results dresults;
-IRrecv irrecv(IR_PIN);
-IRsend irsend;
+IRrecv irrecv(IRR_PIN);
+IRsend irsend(IRS_PIN);
+
+boolean freq = true;
 
 void receiveIR()
 {
+	System.setCpuFrequency((System.getCpuFrequency() == eCF_80MHz) ? eCF_160MHz : eCF_80MHz);
+
+	Serial.print("use ");
+	Serial.println(System.getCpuFrequency());
+
+	irsend.sendSAMSUNG(0xE0E048B7, 32);
+
 	if(irrecv.decode(&dresults)==DECODED){
 		irTimer.stop();
 		unsigned int * sendbuff = new unsigned int[dresults.rawlen-1];
@@ -29,8 +40,8 @@ void init()
 {
 	Serial.begin(SERIAL_BAUD_RATE); // 115200 by default
 	Serial.println("Setting up...");
-	irrecv.blink13(1);
+	irrecv.blink(1, LED_PIN);
 	irrecv.enableIRIn(); // Start the receiver
-	irTimer.initializeMs(1000, receiveIR).start();
+	irTimer.initializeMs(2000, receiveIR).start();
 	Serial.println("Ready...");
 }
