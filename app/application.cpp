@@ -3,43 +3,34 @@
 #include "IRremoteInt.h"
 #include <SmingCore/SmingCore.h>
 
+#define IR_PIN 12 // GPIO12
 
 Timer irTimer;
 decode_results dresults;
-IRrecv irrecv(12);
-IRsend irsend(13);
-
-void dump(decode_results *results)
-{
-	Serial.print("type: ");
-	Serial.print(results->decode_type);
-	Serial.print(" hex: 0x");
-	Serial.print(results->value, HEX);
-	Serial.print(" dec: ");
-	Serial.print(results->value, DEC);
-	Serial.print(" bits: ");
-	Serial.print(results->bits, DEC);
-	Serial.println();
-}
+IRrecv irrecv(IR_PIN);
+IRsend irsend;
 
 void receiveIR()
 {
+	if(irrecv.decode(&dresults)==DECODED){
 		irTimer.stop();
-		irsend.sendNEC(0xE0E048B7, 32);
-		delay(500);
-		irsend.sendSAMSUNG(0xE0E048B7, 32);
-		Serial.println("Sent ...");
+		unsigned int * sendbuff = new unsigned int[dresults.rawlen-1];
+		for(int i=0; i<dresults.rawlen-1; i++){
+			sendbuff[i]=dresults.rawbuf[i+1]*50;
+		}
+		irsend.sendNEC(dresults.value, dresults.bits);
+		Serial.println("Sent NEC");
+		irrecv.enableIRIn();
 		irTimer.start();
+	}
 }
 
 void init()
 {
-	System.setCpuFrequency(eCF_80MHz);
 	Serial.begin(SERIAL_BAUD_RATE); // 115200 by default
-	Serial.systemDebugOutput(true);
 	Serial.println("Setting up...");
-	irTimer.initializeMs(2000, receiveIR).start();
+	irrecv.blink13(1);
+	irrecv.enableIRIn(); // Start the receiver
+	irTimer.initializeMs(1000, receiveIR).start();
 	Serial.println("Ready...");
-	Serial.print(system_get_cpu_freq());
-	Serial.println();
 }

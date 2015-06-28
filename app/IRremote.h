@@ -10,12 +10,7 @@
 
 #define FRC1_ENABLE_TIMER BIT7
 #define FRC1_AUTO_RELOAD BIT6
-
-#define	DIVDED_BY_1 0
 #define	DIVDED_BY_16 4
-#define DIVDED_BY_256 8
-
-#define TM_EDGE_INT 0
 #define TM_LEVEL_INT 1
 
 

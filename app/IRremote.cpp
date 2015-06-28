@@ -259,8 +259,7 @@ void IRsend::enableIROut(int khz)
 	digitalWrite(irparams.sendpin, LOW);
 
 	uint32_t hz = khz * 1000;
-	uint32_t cpu_freq = system_get_cpu_freq() * 1000000;
-	uint32_t ticks = (cpu_freq / 16 / hz / 2) - 1;
+	uint32_t ticks = (CPU_CLK_FREQ / 16 / hz / 2) - 1; // magic - 1
 
 	ETS_FRC1_INTR_DISABLE();
 	TM1_EDGE_INT_ENABLE();
